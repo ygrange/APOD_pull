@@ -1,5 +1,4 @@
 #!/usr/bin/python
-#!/usr/bin/python
 #    Copyright 2015 Yan Grange (grange@astron.nl), 
 #    ASTRON, Netherlands institute for radio astronomy.
 #
