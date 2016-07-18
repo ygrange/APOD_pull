@@ -37,7 +37,7 @@ def imgstrip(c):
                 return APOD_URL+"/"+cc
     else:
         csp=c.split('"')
-                for cc in csp:
+        for cc in csp:
             for ex in IMEXTS:
                 if ex in cc:
                     if "http" in cc:
@@ -45,7 +45,7 @@ def imgstrip(c):
                     else:
                         return APOD_URL+"/"+cc
         prevdat=(datetime.date(int("20"+date[0:2]),int(date[2:4]),int(date[4:6]))-datetime.timedelta(1)).strftime("%y%m%d")
-                return get_img(prevdat)
+        return get_img(prevdat)
 
 def ytstrip(c):
     for cc in c.split('"'):
@@ -84,7 +84,7 @@ def get_img(date):
 
     container=list()
     for lin in data:
-            if flag:
+        if flag:
             if "</center>" not in lin:
                 container.append(lin.strip())
             else:
