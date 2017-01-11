@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #    Copyright 2015 Yan Grange (grange@astron.nl), 
 #    ASTRON, Netherlands institute for radio astronomy.
 #
@@ -14,9 +14,10 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
    
-import os, sys, datetime, urllib
+import os, sys, datetime, certifi
+import urllib3 as urllib
 
-APOD_URL="http://apod.nasa.gov/apod"
+APOD_URL="https://apod.nasa.gov/apod"
 APOD_HOME="APOD_pull"
 
 APOD_HOME=os.environ['HOME']+"/"+APOD_HOME
@@ -69,14 +70,16 @@ else:
 
 def get_img(date):
     baseurl=APOD_URL+"/"+"ap"+date+".html"
-    hf=urllib.urlopen(baseurl)
-    if hf.getcode() !=200:
+    http = urllib.PoolManager(cert_reqs='CERT_REQUIRED',ca_certs=certifi.where())
+    hf=http.request('GET', baseurl, preload_content=False)
+    if hf.status !=200:
         sys.stderr.write("Something went wrong. URL seems not to exist\n\n")
-        sys.stderr.write(str(hf.getcode())+"\n\n")
+        sys.stderr.write(str(hf.status+"\n\n"))
         sys.exit(2)
     else:
-        data=hf.readlines()
+        data = hf.readlines()
     hf.close()
+    hf.release_conn()
 
     longdat=datetime.date(int("20"+date[0:2]),int(date[2:4]),int(date[4:6])).strftime("%Y %B %-d")
 
@@ -84,6 +87,7 @@ def get_img(date):
 
     container=list()
     for lin in data:
+        lin=lin.decode('utf-8')
         if flag:
             if "</center>" not in lin:
                 container.append(lin.strip())
@@ -91,7 +95,6 @@ def get_img(date):
                 flag=0
         if longdat==lin.strip():
             flag=1
-
     for c in container:
         if "href" in c.lower() and imgext(c.lower()):
             return imgstrip(c)
@@ -103,4 +106,9 @@ def get_img(date):
 
 im=get_img(date)
 ext=im[-3:]
-urllib.urlretrieve(im,APOD_HOME+"/"+"currentapod.jpg")
+
+with open(APOD_HOME+"/"+"currentapod.jpg","wb") as fh:
+    http = urllib.PoolManager(cert_reqs='CERT_REQUIRED',ca_certs=certifi.where())
+    req = http.request('GET', im)
+    fh.write(req.data)
+
