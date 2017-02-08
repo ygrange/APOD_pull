@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/Users/grange/anaconda/bin/python
 #    Copyright 2015 Yan Grange (grange@astron.nl), 
 #    ASTRON, Netherlands institute for radio astronomy.
 #
@@ -85,9 +85,12 @@ def get_img(date):
 
     flag=0
 
+    content_type = hf.headers['Content-Type']
+    encoding = [c.split("=")[1].strip() for c in content_type.split(";") 
+                if 'charset=' == c.strip()[:len('charset=')]][0]
     container=list()
     for lin in data:
-        lin=lin.decode('utf-8')
+        lin=lin.decode(encoding)
         if flag:
             if "</center>" not in lin:
                 container.append(lin.strip())
