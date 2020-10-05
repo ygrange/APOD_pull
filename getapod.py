@@ -1,4 +1,4 @@
-#!/Users/grange/anaconda/bin/python
+#!/usr/bin/env python3
 #    Copyright 2015 Yan Grange (grange@astron.nl), 
 #    ASTRON, Netherlands institute for radio astronomy.
 #
